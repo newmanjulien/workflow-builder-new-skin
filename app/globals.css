@@ -133,7 +133,7 @@
 
 /* Unified Delete Button - No red background, subtle styling */
 .btn-delete {
-  @apply btn-base btn-sm text-red-600 hover:text-red-700 hover:bg-red-50 focus:ring-red-500 border border-gray-300 hover:border-red-300 rounded-md;
+  @apply btn-base btn-sm text-red-600 hover:text-red-700 hover:bg-red-50 focus:ring-red-500 border border-transparent hover:border-red-300 rounded-md;
   @apply px-3 py-1.5 text-sm font-medium flex items-center space-x-1.5 min-w-fit;
 }
 
