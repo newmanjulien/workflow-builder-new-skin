@@ -175,7 +175,9 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
               <h3 className="font-medium text-gray-900 truncate">{workflow.title}</h3>
             </div>
             <div className="text-muted mt-1 line-clamp-2">
-              {workflow.steps && workflow.steps.length > 0 && workflow.steps[0].instruction}
+              {isPlaybook && workflow.playbook_description
+                ? workflow.playbook_description
+                : workflow.steps && workflow.steps.length > 0 && workflow.steps[0].instruction}
             </div>
           </div>
         </div>
@@ -222,7 +224,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
           {/* Edit Button */}
           <button onClick={() => onNavigateToWorkflow(workflow.id)} className="btn-ghost btn-sm">
-            Edit
+            {isPlaybook ? "View" : "Edit"}
           </button>
 
           {/* Delete Button */}
