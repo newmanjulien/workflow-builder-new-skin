@@ -29,6 +29,7 @@ const HomeScreen = ({
   const [updatingStatus, setUpdatingStatus] = useState(null)
   const [activeSection, setActiveSection] = useState(initialSection) // Use initialSection
   const [activePlaybookSection, setActivePlaybookSection] = useState(initialPlaybookSection) // Use initialPlaybookSection
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false)
 
   // Define playbook subsections
   const playbookSections = [
@@ -268,22 +269,19 @@ const HomeScreen = ({
     return (
       <div key={section.id} className="card">
         {/* Section Header */}
-        <button
-          onClick={() => setActivePlaybookSection(isActive ? null : section.id)}
-          className="w-full px-6 py-4 flex-between hover:bg-gray-50 transition-colors text-left"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+        <button onClick={() => setActivePlaybookSection(isActive ? null : section.id)} className="accordion-header">
+          <div className="accordion-title-group">
+            <div className="accordion-icon">
               <IconComponent className="w-4 h-4 text-gray-600" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-900">{section.title}</h3>
-              <p className="text-sm text-gray-500 mt-0.5">
+              <h3 className="accordion-title">{section.title}</h3>
+              <p className="accordion-subtitle">
                 {workflowCount} workflow{workflowCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
-          <div className="flex-shrink-0">
+          <div className="accordion-chevron">
             {isActive ? (
               <ChevronDown className="w-5 h-5 text-gray-400" />
             ) : (
@@ -294,10 +292,10 @@ const HomeScreen = ({
 
         {/* Section Content */}
         {isActive && (
-          <div className="border-t border-gray-200">
+          <div className="accordion-content">
             {/* Section Description */}
-            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <p className="text-sm text-gray-600">{section.description}</p>
+            <div className="accordion-description">
+              <p className="accordion-description-text">{section.description}</p>
             </div>
 
             {/* Workflows Table */}
@@ -349,17 +347,21 @@ const HomeScreen = ({
     </div>
   )
 
+  const handleModalCancel = () => {
+    setShowUnsavedModal(false)
+  }
+
+  const handleModalLeave = () => {
+    setShowUnsavedModal(false)
+    // Additional logic to handle leaving without saving (e.g., navigating away)
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="loading-container">
           <div className="loading-content">
-            <div className="loading-icon-container">
-              <div className="loading-spinner"></div>
-              <div className="loading-icon">
-                <Workflow className="w-5 h-5 text-green-600" />
-              </div>
-            </div>
+            <div className="loading-spinner"></div>
             <div className="text-center">
               <p className="loading-text-primary">Loading workflows...</p>
               <p className="loading-text-secondary">Please wait while we fetch your data</p>
@@ -372,6 +374,24 @@ const HomeScreen = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {showUnsavedModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3 className="modal-header">Unsaved Changes</h3>
+            <p className="modal-body">
+              You have unsaved changes. Are you sure you want to leave? Your changes will be lost.
+            </p>
+            <div className="modal-footer">
+              <button onClick={handleModalCancel} className="btn-secondary btn-md">
+                Cancel
+              </button>
+              <button onClick={handleModalLeave} className="btn-danger btn-md">
+                Leave without saving
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="page-header">
         <div className="page-header-content">
