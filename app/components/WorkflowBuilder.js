@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Sparkles, User, ArrowLeft, Workflow, Trash2, ChevronUp, ChevronDown } from "lucide-react"
+import { Plus, Sparkles, User, ArrowLeft, Trash2, ChevronUp, ChevronDown } from "lucide-react"
 
 const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack }) => {
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
@@ -50,12 +50,11 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   }
 
   const setDefaultWorkflow = () => {
-    setWorkflowTitle("After discovery calls")
+    setWorkflowTitle("My new workflow")
     setSteps([
       {
         id: Date.now(),
-        instruction:
-          "At 8pm, pull all the Gong recordings from the rep's discovery calls that day. Filter to only deals which have a next step set in Salesforce",
+        instruction: "Add your first step and assign it either to the AI or to a human",
         executor: "ai",
       },
     ])
@@ -195,12 +194,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       <div className="min-h-screen bg-gray-50">
         <div className="loading-container">
           <div className="loading-content">
-            <div className="loading-icon-container">
-              <div className="loading-spinner"></div>
-              <div className="loading-icon">
-                <Workflow className="w-5 h-5 text-green-600" />
-              </div>
-            </div>
+            <div className="loading-spinner"></div>
             <div className="text-center">
               <p className="loading-text-primary">Loading workflow...</p>
               <p className="loading-text-secondary">Please wait while we fetch your data</p>
@@ -233,7 +227,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-secondary">Edit Workflow</h1>
+                <h1 className="heading-secondary">{initialWorkflowId ? "Edit Workflow" : "Create Workflow"}</h1>
               </div>
 
               {/* Right side - Save button */}
