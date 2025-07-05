@@ -7,19 +7,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
   const [workflowTitle, setWorkflowTitle] = useState("")
   const [steps, setSteps] = useState([])
-  const [isPlaybook, setIsPlaybook] = useState(false)
-  const [playbookDescription, setPlaybookDescription] = useState("")
-  const [playbookSection, setPlaybookSection] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-
-  // Define the same playbook sections as in HomeScreen
-  const playbookSections = [
-    { id: "failing-to-close", title: "Rep is failing to close deals" },
-    { id: "deals-drop-off", title: "Deals drop off in negotiation" },
-    { id: "not-moving-forward", title: "Rep is not moving deals forward in earlier stages" },
-    { id: "acv-off-whack", title: "ACV off whack?" },
-  ]
 
   // Load existing workflow data on component mount
   useEffect(() => {
@@ -38,9 +27,6 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       if (result.workflow) {
         setWorkflowTitle(result.workflow.title)
         setSteps(result.workflow.steps)
-        setIsPlaybook(result.workflow.isPlaybook || false)
-        setPlaybookDescription(result.workflow.playbook_description || "")
-        setPlaybookSection(result.workflow.playbookSection || "")
       } else {
         console.error("Workflow not found")
         setDefaultWorkflow()
@@ -64,9 +50,6 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         setWorkflowId(latestWorkflow.id)
         setWorkflowTitle(latestWorkflow.title)
         setSteps(latestWorkflow.steps)
-        setIsPlaybook(latestWorkflow.isPlaybook || false)
-        setPlaybookDescription(latestWorkflow.playbook_description || "")
-        setPlaybookSection(latestWorkflow.playbookSection || "")
       } else {
         // No existing workflows, set up default data
         setDefaultWorkflow()
@@ -89,9 +72,6 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         executor: "ai",
       },
     ])
-    setIsPlaybook(false)
-    setPlaybookDescription("")
-    setPlaybookSection("")
   }
 
   const addStep = () => {
@@ -142,21 +122,15 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       return
     }
 
-    // If it's a playbook, require a section to be selected
-    if (isPlaybook && !playbookSection) {
-      alert("Please select a section for this playbook")
-      return
-    }
-
     setIsSaving(true)
 
     try {
       const workflowData = {
         title: workflowTitle,
         steps: steps,
-        isPlaybook: isPlaybook,
-        playbook_description: playbookDescription,
-        playbookSection: isPlaybook ? playbookSection : null,
+        isPlaybook: false, // Always false for user-created workflows
+        playbook_description: "",
+        playbookSection: null,
       }
 
       let response
@@ -280,67 +254,6 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
             placeholder="Enter workflow title..."
             className="form-input"
           />
-        </div>
-
-        {/* Settings Section */}
-        <div className="mb-6 card">
-          <div className="card-header">
-            <h3 className="heading-secondary">Settings</h3>
-          </div>
-          <div className="card-body">
-            {/* Playbook Toggle */}
-            <div className="flex items-center space-x-3 mb-4">
-              <input
-                type="checkbox"
-                id="isPlaybook"
-                checked={isPlaybook}
-                onChange={(e) => setIsPlaybook(e.target.checked)}
-                className="form-checkbox"
-              />
-              <label htmlFor="isPlaybook" className="text-label">
-                This is a playbook
-              </label>
-            </div>
-
-            {/* Playbook Section Selector */}
-            {isPlaybook && (
-              <div className="mb-4">
-                <label htmlFor="playbookSection" className="form-label">
-                  Playbook Section
-                </label>
-                <select
-                  id="playbookSection"
-                  value={playbookSection}
-                  onChange={(e) => setPlaybookSection(e.target.value)}
-                  className="form-select"
-                >
-                  <option value="">Select a section...</option>
-                  {playbookSections.map((section) => (
-                    <option key={section.id} value={section.id}>
-                      {section.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* Playbook Description */}
-            {isPlaybook && (
-              <div>
-                <label htmlFor="playbookDescription" className="form-label">
-                  Playbook Description
-                </label>
-                <textarea
-                  id="playbookDescription"
-                  value={playbookDescription}
-                  onChange={(e) => setPlaybookDescription(e.target.value)}
-                  placeholder="Enter a description for this playbook..."
-                  rows={3}
-                  className="form-textarea"
-                />
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Steps Section */}
