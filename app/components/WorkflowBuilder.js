@@ -339,8 +339,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                 <button
                   onClick={saveWorkflow}
                   disabled={isSaving || showSavedState}
-                  className={`btn-md transition-all duration-200 ${
-                    showSavedState ? "bg-green-600 text-white border-green-600" : "btn-primary"
+                  className={`btn-md ${
+                    showSavedState ? "btn-saved" : "btn-primary"
                   } ${isSaving || showSavedState ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {isSaving ? (
