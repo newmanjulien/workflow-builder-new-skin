@@ -237,7 +237,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                   disabled={isSaving}
                   className={`btn-primary btn-md ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {isSaving ? "Saving..." : workflowId ? "Update Workflow" : "Save Workflow"}
+                  {isSaving ? "Saving..." : "Save Workflow"}
                 </button>
               </div>
             </div>
