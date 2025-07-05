@@ -85,6 +85,11 @@
     @apply btn-base bg-green-50 text-green-700 hover:bg-green-100 focus:ring-green-500 border-green-200 hover:border-green-300;
   }
 
+  .btn-saved {
+    @apply btn-base bg-green-600 text-white border-green-600 focus:ring-green-500 shadow-sm;
+    @apply hover:bg-green-600 hover:border-green-600; /* Prevent hover state changes */
+  }
+
   /* Button Sizes */
   .btn-sm {
     @apply px-3 py-1.5 text-sm min-w-fit h-8;
