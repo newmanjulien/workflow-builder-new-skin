@@ -34,6 +34,101 @@
   .loading-text-secondary {
     @apply text-sm text-gray-500 mt-1;
   }
+
+  /* Modal/Dialog Components - Supabase Style */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-lg p-6 max-w-md w-full mx-4;
+  }
+
+  .modal-header {
+    @apply text-lg font-medium text-gray-900 mb-4;
+  }
+
+  .modal-body {
+    @apply text-gray-600 mb-6;
+  }
+
+  .modal-footer {
+    @apply flex justify-end space-x-3;
+  }
+
+  /* Step Components - Workflow Builder */
+  .step-connector {
+    @apply flex justify-start ml-3.5 py-3;
+  }
+
+  .step-connector-line {
+    @apply w-px h-4 bg-gray-300;
+  }
+
+  .step-layout {
+    @apply flex items-start space-x-4;
+  }
+
+  .step-content {
+    @apply flex-1;
+  }
+
+  .step-actions {
+    @apply mt-4 flex-between;
+  }
+
+  .step-executor-group {
+    @apply flex items-center space-x-2;
+  }
+
+  .step-controls {
+    @apply flex items-center space-x-2;
+  }
+
+  .step-move-controls {
+    @apply flex items-center space-x-1;
+  }
+
+  .step-assignment {
+    @apply mt-4 pt-4 border-t border-gray-200;
+  }
+
+  /* Accordion/Collapsible Components */
+  .accordion-header {
+    @apply w-full px-6 py-4 flex-between hover:bg-gray-50 transition-colors text-left;
+  }
+
+  .accordion-title-group {
+    @apply flex items-center space-x-3;
+  }
+
+  .accordion-icon {
+    @apply flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center;
+  }
+
+  .accordion-title {
+    @apply font-medium text-gray-900;
+  }
+
+  .accordion-subtitle {
+    @apply text-sm text-gray-500 mt-0.5;
+  }
+
+  .accordion-chevron {
+    @apply flex-shrink-0;
+  }
+
+  .accordion-content {
+    @apply border-t border-gray-200;
+  }
+
+  .accordion-description {
+    @apply px-6 py-4 bg-gray-50 border-b border-gray-200;
+  }
+
+  .accordion-description-text {
+    @apply text-sm text-gray-600;
+  }
 }
 
 /* Typography */
