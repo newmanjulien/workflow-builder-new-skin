@@ -17,12 +17,12 @@ import {
   DollarSign,
 } from "lucide-react"
 
-const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
+const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workflows" }) => {
   const [workflows, setWorkflows] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(null)
-  const [activeSection, setActiveSection] = useState("workflows")
+  const [activeSection, setActiveSection] = useState(initialSection) // Use initialSection
   const [activePlaybookSection, setActivePlaybookSection] = useState(null)
 
   // Define playbook subsections
@@ -60,6 +60,11 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
   useEffect(() => {
     loadWorkflows()
   }, [])
+
+  // Update activeSection when initialSection changes
+  useEffect(() => {
+    setActiveSection(initialSection)
+  }, [initialSection])
 
   const loadWorkflows = async () => {
     try {
@@ -221,7 +226,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
           </button>
 
           {/* Edit Button */}
-          <button onClick={() => onNavigateToWorkflow(workflow.id)} className="btn-ghost btn-sm">
+          <button onClick={() => onNavigateToWorkflow(workflow.id, activeSection)} className="btn-ghost btn-sm">
             Edit
           </button>
 
