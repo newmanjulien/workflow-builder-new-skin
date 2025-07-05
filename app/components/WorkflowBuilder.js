@@ -44,28 +44,9 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   }
 
   const loadLatestWorkflow = async () => {
-    try {
-      const response = await fetch("/api/workflows")
-      const result = await response.json()
-
-      if (result.workflows && result.workflows.length > 0) {
-        // Load the most recent workflow (first in the array since they're ordered by createdAt desc)
-        const latestWorkflow = result.workflows[0]
-        setWorkflowId(latestWorkflow.id)
-        setWorkflowTitle(latestWorkflow.title)
-        setSteps(latestWorkflow.steps)
-        setIsPlaybook(latestWorkflow.isPlaybook || false)
-        setPlaybookDescription(latestWorkflow.playbook_description || "")
-      } else {
-        // No existing workflows, set up default data
-        setDefaultWorkflow()
-      }
-    } catch (error) {
-      console.error("Error loading workflows:", error)
-      setDefaultWorkflow()
-    } finally {
-      setIsLoading(false)
-    }
+    // For new workflows, always start with default data
+    setDefaultWorkflow()
+    setIsLoading(false)
   }
 
   const setDefaultWorkflow = () => {
