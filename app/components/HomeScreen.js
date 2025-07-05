@@ -1,3 +1,4 @@
+// app/components/HomeScreen.js
 "use client"
 
 import { useState, useEffect } from "react"
@@ -173,10 +174,15 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
             <div className="flex items-center space-x-2">
               <h3 className="font-medium text-gray-900 truncate">{workflow.title}</h3>
             </div>
-            <div className="text-muted mt-1 line-clamp-2">
-              {isPlaybook && workflow.playbook_description
-                ? workflow.playbook_description
-                : workflow.steps && workflow.steps.length > 0 && workflow.steps[0].instruction}
+            <div className="text-muted mt-1 space-y-1">
+              {/* First step instruction (always shown) */}
+              {workflow.steps && workflow.steps.length > 0 && (
+                <div className="line-clamp-2">{workflow.steps[0].instruction}</div>
+              )}
+              {/* Playbook description (additional for playbooks) */}
+              {isPlaybook && workflow.playbook_description && (
+                <div className="text-xs text-gray-500 italic line-clamp-1">{workflow.playbook_description}</div>
+              )}
             </div>
           </div>
         </div>
