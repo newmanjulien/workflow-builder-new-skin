@@ -188,7 +188,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
       </td>
 
       <td className="table-cell">
-        <span className="text-sm text-gray-600">{getStepsSummary(workflow.steps)}</span>
+        <span className="text-sm text-gray-600 whitespace-nowrap">{getStepsSummary(workflow.steps)}</span>
       </td>
 
       <td className="table-cell-right">
@@ -222,7 +222,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
           {/* Edit Button */}
           <button onClick={() => onNavigateToWorkflow(workflow.id)} className="btn-ghost btn-sm">
-            {isPlaybook ? "View" : "Edit"}
+            {isPlaybook ? "Edit" : "Edit"}
           </button>
 
           {/* Delete Button */}
@@ -366,7 +366,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-primary">Workflows</h1>
+                <h1 className="heading-secondary">Workflows</h1>
               </div>
 
               {/* Right side - New workflow button */}
