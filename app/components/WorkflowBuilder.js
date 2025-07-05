@@ -293,13 +293,13 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
     <div className="min-h-screen bg-gray-50">
       {/* Unsaved Changes Modal */}
       {showUnsavedModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Unsaved Changes</h3>
-            <p className="text-gray-600 mb-6">
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3 className="modal-header">Unsaved Changes</h3>
+            <p className="modal-body">
               You have unsaved changes. Are you sure you want to leave? Your changes will be lost.
             </p>
-            <div className="flex justify-end space-x-3">
+            <div className="modal-footer">
               <button onClick={handleModalCancel} className="btn-secondary btn-md">
                 Cancel
               </button>
@@ -407,10 +407,10 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
               {steps.map((step, index) => (
                 <div key={step.id} className="relative">
                   {/* Step Number */}
-                  <div className="flex items-start space-x-4">
+                  <div className="step-layout">
                     <div className="step-number">{index + 1}</div>
 
-                    <div className="flex-1">
+                    <div className="step-content">
                       {/* Step Content */}
                       <div className="step-container">
                         {/* Instruction Input */}
@@ -422,8 +422,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                         />
 
                         {/* Executor and Actions */}
-                        <div className="mt-4 flex-between">
-                          <div className="flex items-center space-x-2">
+                        <div className="step-actions">
+                          <div className="step-executor-group">
                             <span className="text-sm text-gray-500">Executor:</span>
                             <button
                               onClick={() => updateStep(step.id, "executor", "ai")}
@@ -446,10 +446,10 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                             </button>
                           </div>
 
-                          <div className="flex items-center space-x-2">
+                          <div className="step-controls">
                             {/* Move Step Buttons */}
                             {steps.length > 1 && (
-                              <div className="flex items-center space-x-1">
+                              <div className="step-move-controls">
                                 <button
                                   onClick={() => moveStepUp(index)}
                                   disabled={index === 0}
@@ -481,7 +481,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
                         {/* Human Assignment */}
                         {step.executor === "human" && (
-                          <div className="mt-4 pt-4 border-t border-gray-200">
+                          <div className="step-assignment">
                             <label className="form-label-sm">Assign to:</label>
                             <select
                               value={step.assignedHuman || "Femi Ibrahim"}
@@ -499,8 +499,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
                   {/* Connector Line */}
                   {index < steps.length - 1 && (
-                    <div className="flex justify-start ml-3.5 py-3">
-                      <div className="w-px h-4 bg-gray-300"></div>
+                    <div className="step-connector">
+                      <div className="step-connector-line"></div>
                     </div>
                   )}
                 </div>
