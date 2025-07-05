@@ -17,13 +17,18 @@ import {
   DollarSign,
 } from "lucide-react"
 
-const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workflows" }) => {
+const HomeScreen = ({
+  onNavigateToWorkflow,
+  onCreateNew,
+  initialSection = "workflows",
+  initialPlaybookSection = null,
+}) => {
   const [workflows, setWorkflows] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(null)
   const [activeSection, setActiveSection] = useState(initialSection) // Use initialSection
-  const [activePlaybookSection, setActivePlaybookSection] = useState(null)
+  const [activePlaybookSection, setActivePlaybookSection] = useState(initialPlaybookSection) // Use initialPlaybookSection
 
   // Define playbook subsections
   const playbookSections = [
@@ -65,6 +70,11 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workf
   useEffect(() => {
     setActiveSection(initialSection)
   }, [initialSection])
+
+  // Update activePlaybookSection when initialPlaybookSection changes
+  useEffect(() => {
+    setActivePlaybookSection(initialPlaybookSection)
+  }, [initialPlaybookSection])
 
   const loadWorkflows = async () => {
     try {
@@ -167,7 +177,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workf
     }
   })
 
-  const renderWorkflowRow = (workflow, isPlaybookWorkflow = false) => (
+  const renderWorkflowRow = (workflow, isPlaybookWorkflow = false, playbookSectionId = null) => (
     <tr key={workflow.id} className={`table-row ${isPlaybookWorkflow ? "bg-blue-50" : ""}`}>
       <td className="table-cell">
         <div className="flex items-center space-x-3">
@@ -226,7 +236,10 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workf
           </button>
 
           {/* Edit Button */}
-          <button onClick={() => onNavigateToWorkflow(workflow.id, activeSection)} className="btn-ghost btn-sm">
+          <button
+            onClick={() => onNavigateToWorkflow(workflow.id, activeSection, playbookSectionId)}
+            className="btn-ghost btn-sm"
+          >
             Edit
           </button>
 
@@ -302,7 +315,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workf
                     </tr>
                   </thead>
                   <tbody className="table-body">
-                    {sectionWorkflows.map((workflow) => renderWorkflowRow(workflow, true))}
+                    {sectionWorkflows.map((workflow) => renderWorkflowRow(workflow, true, section.id))}
                   </tbody>
                 </table>
               </div>
@@ -429,7 +442,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew, initialSection = "workf
                     </tr>
                   </thead>
                   <tbody className="table-body">
-                    {filteredWorkflows.map((workflow) => renderWorkflowRow(workflow, false))}
+                    {filteredWorkflows.map((workflow) => renderWorkflowRow(workflow, false, null))}
                   </tbody>
                 </table>
               </div>
