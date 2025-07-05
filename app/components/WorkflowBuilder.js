@@ -118,12 +118,6 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   }
 
   const saveWorkflow = async () => {
-    // Don't allow saving playbooks
-    if (isPlaybook) {
-      alert("Playbooks cannot be edited through this interface")
-      return
-    }
-
     // Basic validation
     if (!workflowTitle.trim()) {
       alert("Please enter a workflow title")
@@ -142,8 +136,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       const workflowData = {
         title: workflowTitle,
         steps: steps,
-        isPlaybook: false, // Always false for user-created workflows
-        playbook_description: "",
+        isPlaybook: isPlaybook,
+        playbook_description: playbookDescription,
         playbookSection: null,
       }
 
@@ -226,7 +220,10 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
               {/* Left side - Back button */}
               <div className="flex items-center">
                 {onNavigateBack && (
-                  <button onClick={onNavigateBack} className="nav-back-button">
+                  <button
+                    onClick={onNavigateBack}
+                    className="flex items-center space-x-1.5 text-gray-500 hover:text-gray-700 transition-colors duration-200 px-2 py-1 rounded-md hover:bg-gray-100 text-sm"
+                  >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
                   </button>
@@ -235,22 +232,20 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-primary">
-                  {isPlaybook ? "View Playbook" : workflowId ? "Edit Workflow" : "Create Workflow"}
+                <h1 className="heading-secondary">
+                  {isPlaybook ? "Edit Playbook" : workflowId ? "Edit Workflow" : "Create Workflow"}
                 </h1>
               </div>
 
-              {/* Right side - Save button (only for workflows) */}
+              {/* Right side - Save button */}
               <div className="flex items-center">
-                {!isPlaybook && (
-                  <button
-                    onClick={saveWorkflow}
-                    disabled={isSaving}
-                    className={`btn-primary btn-md ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    {isSaving ? "Saving..." : workflowId ? "Update Workflow" : "Save Workflow"}
-                  </button>
-                )}
+                <button
+                  onClick={saveWorkflow}
+                  disabled={isSaving}
+                  className={`btn-primary btn-md ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {isSaving ? "Saving..." : workflowId ? "Update Workflow" : "Save Workflow"}
+                </button>
               </div>
             </div>
           </div>
@@ -279,7 +274,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         {isPlaybook && playbookDescription && (
           <div className="mb-6 card">
             <div className="card-header">
-              <h3 className="heading-secondary">Description</h3>
+              <h3 className="heading-secondary">About this workflow</h3>
             </div>
             <div className="card-body">
               <p className="text-gray-700">{playbookDescription}</p>
@@ -292,12 +287,10 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
           <div className="card-header">
             <div className="flex-between">
               <h3 className="heading-secondary">{isPlaybook ? "Playbook Steps" : "Workflow Steps"}</h3>
-              {!isPlaybook && (
-                <button onClick={addStep} className="btn-primary btn-sm btn-icon-sm">
-                  <Plus className="w-4 h-4" />
-                  <span>Add Step</span>
-                </button>
-              )}
+              <button onClick={addStep} className="btn-primary btn-sm btn-icon-sm">
+                <Plus className="w-4 h-4" />
+                <span>Add Step</span>
+              </button>
             </div>
           </div>
 
@@ -315,10 +308,9 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                         {/* Instruction Input */}
                         <textarea
                           value={step.instruction}
-                          onChange={(e) => !isPlaybook && updateStep(step.id, "instruction", e.target.value)}
-                          placeholder={isPlaybook ? "" : "Enter step instructions..."}
-                          className={`form-textarea-lg ${isPlaybook ? "bg-gray-50 cursor-not-allowed" : ""}`}
-                          disabled={isPlaybook}
+                          onChange={(e) => updateStep(step.id, "instruction", e.target.value)}
+                          placeholder="Enter step instructions..."
+                          className="form-textarea-lg"
                         />
 
                         {/* Executor and Actions */}
@@ -326,30 +318,28 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-500">Executor:</span>
                             <button
-                              onClick={() => !isPlaybook && updateStep(step.id, "executor", "ai")}
+                              onClick={() => updateStep(step.id, "executor", "ai")}
                               className={`btn-sm btn-icon-sm ${
                                 step.executor === "ai" ? "btn-status-active" : "btn-secondary"
-                              } ${isPlaybook ? "cursor-not-allowed opacity-75" : ""}`}
-                              disabled={isPlaybook}
+                              }`}
                             >
                               <Sparkles className="w-3 h-3" />
                               <span>AI</span>
                             </button>
 
                             <button
-                              onClick={() => !isPlaybook && updateStep(step.id, "executor", "human")}
+                              onClick={() => updateStep(step.id, "executor", "human")}
                               className={`btn-sm btn-icon-sm ${
                                 step.executor === "human" ? "bg-gray-800 text-white" : "btn-secondary"
-                              } ${isPlaybook ? "cursor-not-allowed opacity-75" : ""}`}
-                              disabled={isPlaybook}
+                              }`}
                             >
                               <User className="w-3 h-3" />
                               <span>Human</span>
                             </button>
                           </div>
 
-                          {/* Delete Button (only for workflows) */}
-                          {!isPlaybook && steps.length > 1 && (
+                          {/* Delete Button */}
+                          {steps.length > 1 && (
                             <button
                               onClick={() => deleteStep(step.id)}
                               className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
@@ -366,9 +356,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                             <label className="form-label-sm">Assign to:</label>
                             <select
                               value={step.assignedHuman || "Femi Ibrahim"}
-                              onChange={(e) => !isPlaybook && updateStep(step.id, "assignedHuman", e.target.value)}
-                              className={`form-input-sm ${isPlaybook ? "bg-gray-50 cursor-not-allowed" : ""}`}
-                              disabled={isPlaybook}
+                              onChange={(e) => updateStep(step.id, "assignedHuman", e.target.value)}
+                              className="form-input-sm"
                             >
                               <option value="Femi Ibrahim">Femi Ibrahim</option>
                               <option value="Jason Mao">Jason Mao</option>
