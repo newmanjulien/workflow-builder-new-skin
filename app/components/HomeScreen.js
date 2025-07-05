@@ -243,17 +243,15 @@ const HomeScreen = ({
             Edit
           </button>
 
-          {/* Delete Button - Hidden for playbook workflows */}
+          {/* Delete Button - Now using the preset btn-delete class */}
           {!isPlaybookWorkflow && (
             <button
               onClick={() => handleDeleteWorkflow(workflow.id, workflow.title)}
               disabled={isDeleting === workflow.id}
-              className={`btn-sm ${
-                isDeleting === workflow.id ? "btn-ghost cursor-not-allowed opacity-50" : "text-red-600 hover:bg-red-50"
-              }`}
+              className={`btn-delete ${isDeleting === workflow.id ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              <Trash2 className="w-3 h-3 mr-1" />
-              {isDeleting === workflow.id ? "Deleting..." : "Delete"}
+              <Trash2 className="w-3 h-3" />
+              <span>{isDeleting === workflow.id ? "Deleting..." : "Delete"}</span>
             </button>
           )}
         </div>
