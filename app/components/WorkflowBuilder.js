@@ -401,7 +401,10 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
                           {/* Delete Button */}
                           {steps.length > 1 && (
-                            <button onClick={() => deleteStep(step.id)} className="btn-delete-step btn-icon-sm">
+                            <button
+                              onClick={() => deleteStep(step.id)}
+                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200"
+                            >
                               <Trash2 className="w-3 h-3" />
                               <span>Delete</span>
                             </button>
