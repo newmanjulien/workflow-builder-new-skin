@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Sparkles, User, ArrowLeft, Trash2, ChevronUp, ChevronDown } from "lucide-react"
+import { Plus, Sparkles, User, ArrowLeft, Trash2, ChevronUp, ChevronDown, Check } from "lucide-react"
 
 const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack }) => {
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
@@ -11,6 +11,17 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   const [playbookDescription, setPlaybookDescription] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showSavedState, setShowSavedState] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false)
+
+  // Store original data to compare against
+  const [originalData, setOriginalData] = useState({
+    title: "",
+    steps: [],
+    isPlaybookWorkflow: false,
+    playbookDescription: "",
+  })
 
   // Load existing workflow data on component mount
   useEffect(() => {
@@ -21,16 +32,50 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
     }
   }, [initialWorkflowId])
 
+  // Track changes for dirty state
+  useEffect(() => {
+    const currentData = {
+      title: workflowTitle,
+      steps: steps,
+      isPlaybookWorkflow: isPlaybookWorkflow,
+      playbookDescription: playbookDescription,
+    }
+
+    const hasChanges = JSON.stringify(currentData) !== JSON.stringify(originalData)
+    setHasUnsavedChanges(hasChanges)
+  }, [workflowTitle, steps, isPlaybookWorkflow, playbookDescription, originalData])
+
+  // Browser beforeunload event for unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue = ""
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+  }, [hasUnsavedChanges])
+
   const loadSpecificWorkflow = async (id) => {
     try {
       const response = await fetch(`/api/workflows/${id}`)
       const result = await response.json()
 
       if (result.workflow) {
-        setWorkflowTitle(result.workflow.title)
-        setSteps(result.workflow.steps)
-        setIsPlaybookWorkflow(result.workflow.isPlaybookWorkflow || false)
-        setPlaybookDescription(result.workflow.playbook_description || "")
+        const data = {
+          title: result.workflow.title,
+          steps: result.workflow.steps,
+          isPlaybookWorkflow: result.workflow.isPlaybookWorkflow || false,
+          playbookDescription: result.workflow.playbook_description || "",
+        }
+
+        setWorkflowTitle(data.title)
+        setSteps(data.steps)
+        setIsPlaybookWorkflow(data.isPlaybookWorkflow)
+        setPlaybookDescription(data.playbookDescription)
+        setOriginalData(data)
       } else {
         console.error("Workflow not found")
         setDefaultWorkflow()
@@ -50,16 +95,24 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   }
 
   const setDefaultWorkflow = () => {
-    setWorkflowTitle("My new workflow")
-    setSteps([
-      {
-        id: Date.now(),
-        instruction: "Add your first step and assign it either to the AI or to a human",
-        executor: "ai",
-      },
-    ])
-    setIsPlaybookWorkflow(false)
-    setPlaybookDescription("")
+    const defaultData = {
+      title: "My new workflow",
+      steps: [
+        {
+          id: Date.now(),
+          instruction: "Add your first step and assign it either to the AI or to a human",
+          executor: "ai",
+        },
+      ],
+      isPlaybookWorkflow: false,
+      playbookDescription: "",
+    }
+
+    setWorkflowTitle(defaultData.title)
+    setSteps(defaultData.steps)
+    setIsPlaybookWorkflow(defaultData.isPlaybookWorkflow)
+    setPlaybookDescription(defaultData.playbookDescription)
+    setOriginalData(defaultData)
   }
 
   const addStep = () => {
@@ -117,6 +170,23 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
     }
   }
 
+  const handleBackClick = () => {
+    if (hasUnsavedChanges) {
+      setShowUnsavedModal(true)
+    } else {
+      onNavigateBack()
+    }
+  }
+
+  const handleModalLeave = () => {
+    setShowUnsavedModal(false)
+    onNavigateBack()
+  }
+
+  const handleModalCancel = () => {
+    setShowUnsavedModal(false)
+  }
+
   const saveWorkflow = async () => {
     // Basic validation
     if (!workflowTitle.trim()) {
@@ -170,13 +240,27 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         if (!workflowId && result.id) {
           setWorkflowId(result.id)
         }
-        alert("Workflow saved successfully!")
+
+        // Update original data to reflect saved state
+        const savedData = {
+          title: workflowTitle,
+          steps: steps,
+          isPlaybookWorkflow: isPlaybookWorkflow,
+          playbookDescription: playbookDescription,
+        }
+        setOriginalData(savedData)
+
+        // Show saved state
+        setShowSavedState(true)
+        setTimeout(() => {
+          setShowSavedState(false)
+        }, 2000)
 
         // If we have a navigation callback and this is a new workflow, navigate back
         if (onNavigateBack && !initialWorkflowId) {
           setTimeout(() => {
             onNavigateBack()
-          }, 1000)
+          }, 2500)
         }
       } else {
         alert("Error saving workflow: " + result.error)
@@ -207,6 +291,26 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Unsaved Changes Modal */}
+      {showUnsavedModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Unsaved Changes</h3>
+            <p className="text-gray-600 mb-6">
+              You have unsaved changes. Are you sure you want to leave? Your changes will be lost.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button onClick={handleModalCancel} className="btn-secondary btn-md">
+                Cancel
+              </button>
+              <button onClick={handleModalLeave} className="btn-danger btn-md">
+                Leave without saving
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="page-header">
         <div className="page-header-content">
@@ -216,7 +320,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
               <div className="flex items-center">
                 {onNavigateBack && (
                   <button
-                    onClick={onNavigateBack}
+                    onClick={handleBackClick}
                     className="flex items-center space-x-1.5 text-gray-500 hover:text-gray-700 transition-colors duration-200 px-2 py-1 rounded-md hover:bg-gray-100 text-sm"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -234,10 +338,21 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
               <div className="flex items-center">
                 <button
                   onClick={saveWorkflow}
-                  disabled={isSaving}
-                  className={`btn-primary btn-md ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={isSaving || showSavedState}
+                  className={`btn-md transition-all duration-200 ${
+                    showSavedState ? "bg-green-600 text-white border-green-600" : "btn-primary"
+                  } ${isSaving || showSavedState ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {isSaving ? "Saving..." : "Save Workflow"}
+                  {isSaving ? (
+                    "Saving..."
+                  ) : showSavedState ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Saved!
+                    </>
+                  ) : (
+                    "Save Workflow"
+                  )}
                 </button>
               </div>
             </div>
