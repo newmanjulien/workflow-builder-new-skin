@@ -14,6 +14,8 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   const [showSavedState, setShowSavedState] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [showUnsavedModal, setShowUnsavedModal] = useState(false)
+  const [showValidationModal, setShowValidationModal] = useState(false)
+  const [validationMessage, setValidationMessage] = useState("")
 
   // Store original data to compare against
   const [originalData, setOriginalData] = useState({
@@ -187,16 +189,23 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
     setShowUnsavedModal(false)
   }
 
+  const handleValidationModalClose = () => {
+    setShowValidationModal(false)
+    setValidationMessage("")
+  }
+
   const saveWorkflow = async () => {
     // Basic validation
     if (!workflowTitle.trim()) {
-      alert("Please enter a workflow title")
+      setValidationMessage("Please enter a workflow title")
+      setShowValidationModal(true)
       return
     }
 
     const hasEmptySteps = steps.some((step) => !step.instruction.trim())
     if (hasEmptySteps) {
-      alert("Please fill in all step instructions")
+      setValidationMessage("Please fill in all step instructions")
+      setShowValidationModal(true)
       return
     }
 
@@ -263,11 +272,13 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
           }, 2500)
         }
       } else {
-        alert("Error saving workflow: " + result.error)
+        setValidationMessage("Error saving workflow: " + result.error)
+        setShowValidationModal(true)
       }
     } catch (error) {
       console.error("Save error:", error)
-      alert("Error saving workflow: " + error.message)
+      setValidationMessage("Error saving workflow: " + error.message)
+      setShowValidationModal(true)
     } finally {
       setIsSaving(false)
     }
@@ -305,6 +316,23 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
               </button>
               <button onClick={handleModalLeave} className="btn-danger btn-md">
                 Leave without saving
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Validation Modal */}
+      {showValidationModal && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3 className="modal-header">Validation Error</h3>
+            <p className="modal-body">
+              {validationMessage}
+            </p>
+            <div className="modal-footer">
+              <button onClick={handleValidationModalClose} className="btn-primary btn-md">
+                OK
               </button>
             </div>
           </div>
