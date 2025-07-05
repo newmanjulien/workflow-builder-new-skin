@@ -146,8 +146,8 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
   }
 
   const getPlaybooksForSection = (sectionId) => {
-    const playbooks = workflows.filter((workflow) => workflow.isPlaybook === true)
-    return playbooks.filter((playbook) => playbook.playbookSection === sectionId)
+    const playbookWorkflows = workflows.filter((workflow) => workflow.isPlaybookWorkflow === true)
+    return playbookWorkflows.filter((workflow) => workflow.playbook === sectionId)
   }
 
   const getPlaybookCountForSection = (sectionId) => {
@@ -156,14 +156,14 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
   const filteredWorkflows = workflows.filter((workflow) => {
     if (activeSection === "playbooks") {
-      return workflow.isPlaybook === true
+      return workflow.isPlaybookWorkflow === true
     } else {
-      return workflow.isPlaybook !== true
+      return workflow.isPlaybookWorkflow !== true
     }
   })
 
-  const renderWorkflowRow = (workflow, isPlaybook = false) => (
-    <tr key={workflow.id} className="table-row">
+  const renderWorkflowRow = (workflow, isPlaybookWorkflow = false) => (
+    <tr key={workflow.id} className={`table-row ${isPlaybookWorkflow ? "bg-blue-50" : ""}`}>
       <td className="table-cell">
         <div className="flex items-center space-x-3">
           {/* Status Indicator */}
@@ -222,11 +222,11 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
           {/* Edit Button */}
           <button onClick={() => onNavigateToWorkflow(workflow.id)} className="btn-ghost btn-sm">
-            {isPlaybook ? "Edit" : "Edit"}
+            Edit
           </button>
 
-          {/* Delete Button */}
-          {!isPlaybook && (
+          {/* Delete Button - Hidden for playbook workflows */}
+          {!isPlaybookWorkflow && (
             <button
               onClick={() => handleDeleteWorkflow(workflow.id, workflow.title)}
               disabled={isDeleting === workflow.id}
@@ -244,9 +244,9 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
   )
 
   const renderPlaybookSection = (section) => {
-    const sectionPlaybooks = getPlaybooksForSection(section.id)
+    const sectionWorkflows = getPlaybooksForSection(section.id)
     const isActive = activePlaybookSection === section.id
-    const playbookCount = getPlaybookCountForSection(section.id)
+    const workflowCount = getPlaybookCountForSection(section.id)
     const IconComponent = section.icon
 
     return (
@@ -263,7 +263,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
             <div>
               <h3 className="font-medium text-gray-900">{section.title}</h3>
               <p className="text-sm text-gray-500 mt-0.5">
-                {playbookCount} playbook{playbookCount !== 1 ? "s" : ""}
+                {workflowCount} workflow{workflowCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
@@ -284,29 +284,29 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
               <p className="text-sm text-gray-600">{section.description}</p>
             </div>
 
-            {/* Playbooks Table */}
-            {sectionPlaybooks.length > 0 ? (
+            {/* Workflows Table */}
+            {sectionWorkflows.length > 0 ? (
               <div className="table-container">
                 <table className="table">
                   <thead className="table-header">
                     <tr>
-                      <th className="table-header-cell">Playbook</th>
+                      <th className="table-header-cell">Workflow</th>
                       <th className="table-header-cell">Status</th>
                       <th className="table-header-cell">Steps</th>
                       <th className="table-header-cell-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="table-body">
-                    {sectionPlaybooks.map((playbook) => renderWorkflowRow(playbook, true))}
+                    {sectionWorkflows.map((workflow) => renderWorkflowRow(workflow, true))}
                   </tbody>
                 </table>
               </div>
             ) : (
               <div className="empty-state">
                 <div className="empty-state-icon">
-                  <BookOpen className="w-6 h-6 text-gray-400" />
+                  <Workflow className="w-6 h-6 text-gray-400" />
                 </div>
-                <p className="text-gray-500">No playbooks in this section yet</p>
+                <p className="text-gray-500">No workflows in this playbook yet</p>
               </div>
             )}
           </div>
@@ -392,14 +392,14 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
               className={`nav-tab ${activeSection === "workflows" ? "nav-tab-active" : "nav-tab-inactive"}`}
             >
               Workflows
-              <span className="badge-count">{workflows.filter((w) => !w.isPlaybook).length}</span>
+              <span className="badge-count">{workflows.filter((w) => !w.isPlaybookWorkflow).length}</span>
             </button>
             <button
               onClick={() => setActiveSection("playbooks")}
               className={`nav-tab ${activeSection === "playbooks" ? "nav-tab-active" : "nav-tab-inactive"}`}
             >
               Playbooks
-              <span className="badge-count">{workflows.filter((w) => w.isPlaybook).length}</span>
+              <span className="badge-count">{workflows.filter((w) => w.isPlaybookWorkflow).length}</span>
             </button>
           </nav>
         </div>
