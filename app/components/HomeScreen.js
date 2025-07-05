@@ -132,21 +132,6 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
     }
   }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Unknown"
-
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    } catch (error) {
-      return "Unknown"
-    }
-  }
-
   const getStepsSummary = (steps) => {
     if (!steps || steps.length === 0) return "No steps"
 
@@ -204,10 +189,6 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
       <td className="table-cell">
         <span className="text-sm text-gray-600">{getStepsSummary(workflow.steps)}</span>
-      </td>
-
-      <td className="table-cell">
-        <span className="text-sm text-gray-500">{formatDate(workflow.updatedAt)}</span>
       </td>
 
       <td className="table-cell-right">
@@ -312,7 +293,6 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
                       <th className="table-header-cell">Playbook</th>
                       <th className="table-header-cell">Status</th>
                       <th className="table-header-cell">Steps</th>
-                      <th className="table-header-cell">Updated</th>
                       <th className="table-header-cell-right">Actions</th>
                     </tr>
                   </thead>
@@ -386,7 +366,7 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-secondary">Workflows</h1>
+                <h1 className="heading-primary">Workflows</h1>
               </div>
 
               {/* Right side - New workflow button */}
@@ -440,7 +420,6 @@ const HomeScreen = ({ onNavigateToWorkflow, onCreateNew }) => {
                       <th className="table-header-cell">Workflow</th>
                       <th className="table-header-cell">Status</th>
                       <th className="table-header-cell">Steps</th>
-                      <th className="table-header-cell">Updated</th>
                       <th className="table-header-cell-right">Actions</th>
                     </tr>
                   </thead>
