@@ -247,7 +247,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-secondary">{workflowId ? "Edit Workflow" : "Create Workflow"}</h1>
+                <h1 className="heading-primary">{workflowId ? "Edit Workflow" : "Create Workflow"}</h1>
               </div>
 
               {/* Right side - Save button */}
@@ -401,10 +401,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
                           {/* Delete Button */}
                           {steps.length > 1 && (
-                            <button
-                              onClick={() => deleteStep(step.id)}
-                              className="btn-sm btn-icon-sm text-red-600 hover:bg-red-50 border border-red-200 hover:border-red-300"
-                            >
+                            <button onClick={() => deleteStep(step.id)} className="btn-delete-step btn-icon-sm">
                               <Trash2 className="w-3 h-3" />
                               <span>Delete</span>
                             </button>
