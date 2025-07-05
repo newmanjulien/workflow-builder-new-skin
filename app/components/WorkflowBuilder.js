@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Sparkles, User, ArrowLeft, Trash2, ChevronUp, ChevronDown, Check } from "lucide-react"
+import { Plus, Sparkles, User, ArrowLeft, Trash2, ChevronUp, ChevronDown, Check, AlertTriangle, X } from "lucide-react"
 
 const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack }) => {
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
@@ -302,19 +302,29 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Unsaved Changes Modal */}
+      {/* Unsaved Changes Modal - Supabase Style */}
       {showUnsavedModal && (
         <div className="modal-backdrop">
-          <div className="modal-content">
-            <h3 className="modal-header">Unsaved Changes</h3>
-            <p className="modal-body">
-              You have unsaved changes. Are you sure you want to leave? Your changes will be lost.
-            </p>
-            <div className="modal-footer">
-              <button onClick={handleModalCancel} className="btn-secondary btn-md">
+          <div className="modal-confirm">
+            <div className="modal-confirm-header">
+              <div className="modal-icon-warning">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="modal-title">Unsaved Changes</h3>
+                <p className="modal-subtitle">You have unsaved changes that will be lost</p>
+              </div>
+            </div>
+            <div className="modal-confirm-body">
+              <p className="modal-body-text">
+                Are you sure you want to leave? Your changes will be lost and cannot be recovered.
+              </p>
+            </div>
+            <div className="modal-confirm-footer">
+              <button onClick={handleModalCancel} className="modal-btn-secondary">
                 Cancel
               </button>
-              <button onClick={handleModalLeave} className="btn-danger btn-md">
+              <button onClick={handleModalLeave} className="modal-btn-danger">
                 Leave without saving
               </button>
             </div>
@@ -322,16 +332,26 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         </div>
       )}
 
-      {/* Validation Modal */}
+      {/* Validation Modal - Supabase Style */}
       {showValidationModal && (
         <div className="modal-backdrop">
-          <div className="modal-content">
-            <h3 className="modal-header">Validation Error</h3>
-            <p className="modal-body">
-              {validationMessage}
-            </p>
-            <div className="modal-footer">
-              <button onClick={handleValidationModalClose} className="btn-primary btn-md">
+          <div className="modal-validation">
+            <div className="modal-validation-header">
+              <div className="modal-icon-error">
+                <X className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="modal-title">Validation Error</h3>
+                <p className="modal-subtitle">Please fix the following issue</p>
+              </div>
+            </div>
+            <div className="modal-validation-body">
+              <p className="modal-body-text">
+                {validationMessage}
+              </p>
+            </div>
+            <div className="modal-validation-footer">
+              <button onClick={handleValidationModalClose} className="modal-btn-primary">
                 OK
               </button>
             </div>
