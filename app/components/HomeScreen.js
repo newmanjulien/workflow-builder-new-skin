@@ -1,4 +1,3 @@
-// app/components/HomeScreen.js
 "use client"
 
 import { useState, useEffect } from "react"
