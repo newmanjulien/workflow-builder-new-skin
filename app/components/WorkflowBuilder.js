@@ -7,7 +7,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
   const [workflowTitle, setWorkflowTitle] = useState("")
   const [steps, setSteps] = useState([])
-  const [isPlaybook, setIsPlaybook] = useState(false)
+  const [isPlaybookWorkflow, setIsPlaybookWorkflow] = useState(false)
   const [playbookDescription, setPlaybookDescription] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -29,7 +29,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       if (result.workflow) {
         setWorkflowTitle(result.workflow.title)
         setSteps(result.workflow.steps)
-        setIsPlaybook(result.workflow.isPlaybook || false)
+        setIsPlaybookWorkflow(result.workflow.isPlaybookWorkflow || false)
         setPlaybookDescription(result.workflow.playbook_description || "")
       } else {
         console.error("Workflow not found")
@@ -59,7 +59,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         executor: "ai",
       },
     ])
-    setIsPlaybook(false)
+    setIsPlaybookWorkflow(false)
     setPlaybookDescription("")
   }
 
@@ -117,9 +117,9 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
       const workflowData = {
         title: workflowTitle,
         steps: steps,
-        isPlaybook: isPlaybook,
+        isPlaybookWorkflow: isPlaybookWorkflow,
         playbook_description: playbookDescription,
-        playbookSection: null,
+        playbook: null,
       }
 
       let response
@@ -213,9 +213,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-secondary">
-                  {isPlaybook ? "Edit Playbook" : workflowId ? "Edit Workflow" : "Create Workflow"}
-                </h1>
+                <h1 className="heading-secondary">Edit Workflow</h1>
               </div>
 
               {/* Right side - Save button */}
@@ -238,21 +236,21 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         {/* Workflow Title */}
         <div className="mb-6">
           <label htmlFor="workflowTitle" className="form-label">
-            {isPlaybook ? "Playbook Title" : "Workflow Title"}
+            Workflow Title
           </label>
           <input
             id="workflowTitle"
             type="text"
             value={workflowTitle}
-            onChange={(e) => !isPlaybook && setWorkflowTitle(e.target.value)}
-            placeholder={isPlaybook ? "" : "Enter workflow title..."}
-            className={`form-input ${isPlaybook ? "bg-gray-50 cursor-not-allowed" : ""}`}
-            disabled={isPlaybook}
+            onChange={(e) => !isPlaybookWorkflow && setWorkflowTitle(e.target.value)}
+            placeholder={isPlaybookWorkflow ? "" : "Enter workflow title..."}
+            className={`form-input ${isPlaybookWorkflow ? "bg-gray-50 cursor-not-allowed" : ""}`}
+            disabled={isPlaybookWorkflow}
           />
         </div>
 
-        {/* Playbook Description (only for playbooks) */}
-        {isPlaybook && playbookDescription && (
+        {/* Playbook Description (only for playbook workflows) */}
+        {isPlaybookWorkflow && playbookDescription && (
           <div className="mb-6 card">
             <div className="card-header">
               <h3 className="heading-secondary">About this workflow</h3>
@@ -267,7 +265,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
         <div className="card">
           <div className="card-header">
             <div className="flex-between">
-              <h3 className="heading-secondary">{isPlaybook ? "Playbook Steps" : "Workflow Steps"}</h3>
+              <h3 className="heading-secondary">Workflow Steps</h3>
               <button onClick={addStep} className="btn-primary btn-sm btn-icon-sm">
                 <Plus className="w-4 h-4" />
                 <span>Add Step</span>
