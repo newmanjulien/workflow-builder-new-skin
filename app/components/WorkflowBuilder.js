@@ -247,7 +247,7 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
 
               {/* Center - Title (absolutely positioned) */}
               <div className="absolute left-1/2 transform -translate-x-1/2">
-                <h1 className="heading-primary">{workflowId ? "Edit Workflow" : "Create Workflow"}</h1>
+                <h1 className="heading-secondary">{workflowId ? "Edit Workflow" : "Create Workflow"}</h1>
               </div>
 
               {/* Right side - Save button */}
