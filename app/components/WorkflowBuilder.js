@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Sparkles, User, ArrowLeft, Workflow, Trash2 } from "lucide-react"
+import { Plus, Sparkles, User, ArrowLeft, Workflow, Trash2, ChevronUp, ChevronDown } from "lucide-react"
 
 const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack }) => {
   const [workflowId, setWorkflowId] = useState(initialWorkflowId)
@@ -95,6 +95,26 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
   const deleteStep = (id) => {
     if (steps.length > 1) {
       setSteps(steps.filter((step) => step.id !== id))
+    }
+  }
+
+  const moveStepUp = (index) => {
+    if (index > 0) {
+      const newSteps = [...steps]
+      const temp = newSteps[index]
+      newSteps[index] = newSteps[index - 1]
+      newSteps[index - 1] = temp
+      setSteps(newSteps)
+    }
+  }
+
+  const moveStepDown = (index) => {
+    if (index < steps.length - 1) {
+      const newSteps = [...steps]
+      const temp = newSteps[index]
+      newSteps[index] = newSteps[index + 1]
+      newSteps[index + 1] = temp
+      setSteps(newSteps)
     }
   }
 
@@ -317,13 +337,37 @@ const WorkflowBuilder = ({ workflowId: initialWorkflowId = null, onNavigateBack 
                             </button>
                           </div>
 
-                          {/* Delete Button - Now using the unified btn-delete class */}
-                          {steps.length > 1 && (
-                            <button onClick={() => deleteStep(step.id)} className="btn-delete">
-                              <Trash2 className="w-3 h-3" />
-                              <span>Delete</span>
-                            </button>
-                          )}
+                          <div className="flex items-center space-x-2">
+                            {/* Move Step Buttons */}
+                            {steps.length > 1 && (
+                              <div className="flex items-center space-x-1">
+                                <button
+                                  onClick={() => moveStepUp(index)}
+                                  disabled={index === 0}
+                                  className="btn-move"
+                                  title="Move step up"
+                                >
+                                  <ChevronUp className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => moveStepDown(index)}
+                                  disabled={index === steps.length - 1}
+                                  className="btn-move"
+                                  title="Move step down"
+                                >
+                                  <ChevronDown className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Delete Button */}
+                            {steps.length > 1 && (
+                              <button onClick={() => deleteStep(step.id)} className="btn-delete">
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
 
                         {/* Human Assignment */}
